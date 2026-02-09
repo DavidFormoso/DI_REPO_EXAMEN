@@ -1,0 +1,115 @@
+================================================================================
+          MÁSTER CLASS: GUÍA TOTAL DE DESARROLLO EN AULA+ 
+================================================================================
+
+Este documento es el "Mapa del Tesoro". Si nunca has abierto Android Studio, 
+esto te enseñará no solo a entender la app, sino a ser el dueño del código.
+
+--------------------------------------------------------------------------------
+1. EL ENTORNO: ¿QUÉ ESTOY VIENDO EN MI PANTALLA?
+--------------------------------------------------------------------------------
+
+Cuando abres Android Studio, ves varias zonas:
+- IZQUIERDA (Project): Es tu carpeta de archivos. Asegúrate de que arriba ponga 
+  "Android". Verás dos carpetas principales: `app` (tu código) y `Gradle Scripts` 
+  (la configuración).
+- CENTRO (Editor): Donde escribes. Si abres un XML, verás pestañas arriba a la 
+  derecha: "Code" (solo código), "Design" (solo dibujo) y "Split" (ambos).
+- ABAJO (Logcat): Es la caja negra del avión. Si la app falla, aquí te dice por qué.
+
+--------------------------------------------------------------------------------
+2. ESTRUCTURA DEL PROYECTO (DÓNDE SE GUARDA QUÉ)
+--------------------------------------------------------------------------------
+
+- Manifests / AndroidManifest.xml: El "DNI". Dice qué pantalla arranca primero 
+  y qué permisos tiene la app (ej: Internet).
+- Java / com.example.aula:
+    - /ui: Las pantallas (Fragments) y la ventana principal (MainActivity).
+    - /viewmodel: Los "cerebros" que guardan datos mientras usas la app.
+    - /data: Los "almacenes" que hablan con Firebase o la memoria.
+- Res (Resources):
+    - /layout: Los dibujos de las pantallas (XML).
+    - /values: Colores, textos (strings) y estilos.
+    - /navigation: El mapa de flechas que conecta las pantallas.
+
+--------------------------------------------------------------------------------
+3. LA RECETA MÁGICA: MVVM (EL SECRETO DE LOS PROFESIONALES)
+--------------------------------------------------------------------------------
+
+¿Por qué el código está tan separado? Para que sea fácil de arreglar.
+1. XML (La Cara): Solo dice "aquí hay un botón rojo".
+2. Fragment (Los Ojos): Dice "veo que el usuario ha pulsado el botón".
+3. ViewModel (El Pensamiento): Dice "si pulsó el botón, debo guardar esta nota".
+4. Repository (La Mano): Dice "estoy escribiendo la nota en la base de datos".
+
+--------------------------------------------------------------------------------
+4. GUÍA PASO A PASO PARA PROGRAMAR UNA FUNCIONALIDAD NUEVA
+--------------------------------------------------------------------------------
+
+Imagina que quieres añadir un campo de "Prioridad" (Alta/Baja) a los avisos:
+
+PASO 1: El Dibujo (XML)
+Abre `fragment_home.xml`. Copia un `TextInputLayout` y cámbiale el ID a 
+`@+id/tilPriority`. Cámbiale el `hint` a "Prioridad".
+
+PASO 2: El Cerebro (ViewModel)
+Abre `NoticeViewModel.java`. Modifica el método `addNotice` para que ahora 
+reciba tres cosas: `title`, `subject` y `priority`.
+Usa `priority` para cambiar el texto final: `priority + " | " + subject + ...`
+
+PASO 3: La Pantalla (Fragment)
+Abre `HomeFragment.java`. 
+- Declara el nuevo campo: `TextInputLayout tilPriority = view.findViewById(R.id.tilPriority);`
+- En el clic del botón `btnAdd`, lee el valor: 
+  `String priority = tilPriority.getEditText().getText().toString();`
+- Pásaselo al ViewModel: `noticeVm.addNotice(title, subject, priority);`
+
+--------------------------------------------------------------------------------
+5. CONCEPTOS TÉCNICOS QUE DEBES CONOCER
+--------------------------------------------------------------------------------
+
+- IDs (`@+id/...`): Es el nombre único de cada cosa. Si dos cosas se llaman 
+  igual, la app explota.
+- Livedata & Observe: Es como WhatsApp. El ViewModel "envía" el mensaje y el 
+  Fragment lo "recibe" automáticamente porque está "observando".
+- Context: Es una pieza de información que Android pide para saber dónde está. 
+  En los Fragments se usa `requireContext()`.
+- Intent: No lo usamos mucho aquí porque usamos "Navigation", pero sirve para 
+  abrir otras apps o actividades.
+
+--------------------------------------------------------------------------------
+6. FIREBASE: TU BASE DE DATOS EN LA NUBE
+--------------------------------------------------------------------------------
+
+Esta app usa Firebase para que los usuarios existan de verdad.
+- FirebaseAuth: Gestiona el login. No guarda nombres, solo Email y un ID único.
+- Si quieres que el usuario no tenga que loguearse cada vez, el `AuthRepository` 
+  usa `auth.getCurrentUser()`. Si no es nulo, es que ya entró.
+
+--------------------------------------------------------------------------------
+7. CÓMO ARREGLAR ERRORES (DEBUGGING)
+--------------------------------------------------------------------------------
+
+1. La app se cierra: Ve a la pestaña **Logcat**. Escribe `FATAL` en la barra 
+   de búsqueda. Verás una línea azul que indica el archivo y la línea exacta 
+   donde falló.
+2. El botón no hace nada: Pon un "Breakpoint" (haz clic en el margen izquierdo 
+   del código para que salga un punto rojo) y dale al icono del "bichito" (Debug). 
+   La app se parará ahí y podrás ver qué tienen las variables dentro.
+3. El diseño se ve raro: Usa la pestaña "Split" en el XML para ver cómo cambia 
+   el dibujo mientras escribes el código.
+
+--------------------------------------------------------------------------------
+8. GLOSARIO RÁPIDO PARA EMPEZAR YA
+--------------------------------------------------------------------------------
+
+- `match_parent`: "Estírate todo lo que puedas hasta llenar el hueco".
+- `wrap_content`: "Hazte tan grande como lo que tengas dentro, ni un pelo más".
+- `dp`: Píxeles inteligentes (se ven igual en un móvil pequeño que en uno gigante).
+- `sp`: Tamaño para letras (permite que la gente que ve mal pueda agrandarlas).
+- `findViewById`: "Búscame en el dibujo la pieza que se llame así".
+
+================================================================================
+RECUERDA: Nadie nace sabiendo. Si algo no sale, borra, lee este archivo y 
+vuelve a intentarlo. ¡Tienes el control total de Aula+!
+================================================================================

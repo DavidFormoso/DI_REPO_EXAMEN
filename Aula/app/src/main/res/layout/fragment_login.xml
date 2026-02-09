@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  ConstraintLayout: Contenedor principal que organiza los elementos mediante restricciones.
+  - xmlns:android: Espacio de nombres para los atributos estándar de Android.
+  - xmlns:app: Espacio de nombres para atributos personalizados (como los de ConstraintLayout o Material Design).
+  - android:layout_width="match_parent": El diseño ocupa todo el ancho de la pantalla.
+  - android:layout_height="match_parent": El diseño ocupa todo el alto de la pantalla.
+  - android:padding="20dp": Margen interno para que los elementos no toquen los bordes.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <!-- 
+      TextView: Título de la pantalla de inicio de sesión.
+      - android:id="@+id/tvTitle": Identificador único para este elemento.
+      - android:text="Aula+ — Login ": Texto literal a mostrar.
+      - android:textSize="24sp": Tamaño de la fuente (sp para escalabilidad).
+      - android:textStyle="bold": Estilo de texto en negrita.
+      - app:layout_constraintTop_toTopOf="parent": Alineado al borde superior del contenedor.
+      - app:layout_constraintStart_toStartOf="parent": Alineado al borde izquierdo del contenedor.
+      - app:layout_constraintEnd_toEndOf="parent": Alineado al borde derecho del contenedor.
+    -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Aula+ — Login "
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <!-- 
+      TextInputLayout: Contenedor de Material Design que añade efectos al campo de email.
+      - android:layout_marginTop="60dp": Separación de 60dp respecto al título.
+      - android:hint="Email": Texto que aparece dentro del campo y se desplaza hacia arriba al escribir.
+      - app:boxBackgroundMode="outline": Estilo de borde exterior completo para el campo.
+    -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:hint="Email"
+        app:boxBackgroundMode="outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <!-- 
+          TextInputEditText: El componente real donde el usuario introduce el texto.
+          - android:inputType="textEmailAddress": Configura el teclado con el símbolo '@' visible.
+        -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 
+      TextInputLayout: Contenedor para el campo de contraseña.
+      - app:endIconMode="password_toggle": Añade el icono de "ojo" para mostrar/ocultar la contraseña.
+    -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPass"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Contraseña"
+        app:boxBackgroundMode="outline"
+        app:endIconMode="password_toggle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilEmail">
+
+        <!-- 
+          TextInputEditText: Campo de texto para la clave.
+          - android:inputType="textPassword": Oculta los caracteres escritos por seguridad.
+        -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 
+      MaterialButton: Botón de inicio de sesión con estilo Material.
+      - android:layout_marginTop="60dp": Espaciado respecto al campo de contraseña.
+      - android:text="Entrar": Texto que aparece dentro del botón.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="Entrar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilPass" />
+
+    <!-- 
+      LinearLayout: Contenedor lineal horizontal para agrupar el texto de ayuda y el botón de registro.
+      - android:orientation="horizontal": Coloca sus elementos uno al lado del otro.
+    -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/registerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        
+        <!-- TextView simple para la pregunta "¿No tienes cuenta?" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿No tienes cuenta?"
+            />
+
+        <!-- 
+          MaterialButton (TextButton): Botón con estilo de solo texto para redirigir al registro.
+          - style="@style/Widget.Material3.Button.TextButton": Quita el fondo y bordes al botón.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Regístrate"
+            style="@style/Widget.Material3.Button.TextButton"
+            />
+    </LinearLayout>
+
+    <!-- 
+      CircularProgressIndicator: Rueda de carga animada.
+      - android:visibility="gone": Está oculto por defecto hasta que se active por código.
+      - android:indeterminate="true": La animación gira continuamente sin indicar un progreso específico.
+    -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/registerContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

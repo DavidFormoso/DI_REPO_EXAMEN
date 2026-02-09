@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  navigation: Nodo raíz que define el gráfico de navegación de la aplicación.
+  - xmlns:android: Espacio de nombres para los atributos estándar de Android.
+  - xmlns:app: Espacio de nombres para atributos de la librería de navegación.
+  - android:id: Identificador único para este gráfico de navegación.
+  - app:startDestination: Define el fragmento que se cargará primero al iniciar el gráfico.
+-->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/authGateFragment">
+
+
+    <!-- 
+      fragment: Define una pantalla (destino) en el gráfico.
+      - android:id: ID único para referenciar este destino.
+      - android:name: Nombre de la clase Java/Kotlin que implementa el fragmento.
+      - android:label: Etiqueta descriptiva (usada a veces en la barra de herramientas).
+    -->
+    <fragment
+        android:id="@+id/authGateFragment"
+        android:name="com.example.aula.ui.AuthGateFragment"
+        android:label="AuthGate">
+        
+        <!-- 
+          action: Define una posible transición de esta pantalla a otra.
+          - android:id: ID único para ejecutar esta navegación desde el código.
+          - app:destination: El destino al que lleva esta acción.
+          - app:popUpTo: Elimina destinos de la pila hasta llegar a este ID.
+          - app:popUpToInclusive: Si es true, también elimina el ID especificado en popUpTo de la pila.
+        -->
+        <action
+            android:id="@+id/action_gate_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/authGateFragment"
+            app:popUpToInclusive="true"/>
+
+        <!-- Acción para navegar a la pantalla de inicio (Home) desde la puerta de enlace -->
+        <action
+            android:id="@+id/action_gate_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/authGateFragment"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
+
+    <!-- Fragmento que representa la pantalla de inicio de sesión -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.aula.ui.LoginFragment"
+        android:label="Login">
+
+        <!-- Acción para ir a la pantalla de registro -->
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment"/>
+
+        <!-- Acción para ir a Home tras un login exitoso, limpiando el Login de la pila -->
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <!-- Fragmento que representa la pantalla de registro de usuario -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.aula.ui.RegisterFragment"
+        android:label="Registro">
+
+        <!-- Navega a Home tras el registro y limpia la pantalla de registro de la pila -->
+        <action
+            android:id="@+id/action_register_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/registerFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- Navega de vuelta al login si el usuario ya tiene cuenta -->
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/registerFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <!-- Fragmento que representa la pantalla principal de la aplicación -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.aula.ui.HomeFragment"
+        android:label="Home">
+        
+        <!-- Acción para cerrar sesión: vuelve a la puerta de enlace y limpia todo el gráfico -->
+        <action
+            android:id="@+id/action_home_to_authGate"
+            app:destination="@id/authGateFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
+        
+        <!-- Acción para navegar a la pantalla de perfil del usuario -->
+        <action
+            android:id="@+id/action_homeFragment_to_fragment_profile"
+            app:destination="@id/fragment_profile" />
+    </fragment>
+
+    <!-- Fragmento que representa la pantalla de perfil del usuario -->
+    <fragment
+        android:id="@+id/fragment_profile"
+        android:name="com.example.aula.ui.ProfileFragment"
+        android:label="Profile">
+        
+        <!-- Acción para ir al Login (por ejemplo, al cerrar sesión desde el perfil) -->
+        <action
+            android:id="@+id/action_fragment_profile_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+</navigation>

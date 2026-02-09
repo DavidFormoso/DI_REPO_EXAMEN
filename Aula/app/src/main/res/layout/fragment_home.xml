@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  ConstraintLayout: Contenedor principal que permite posicionar elementos de forma relativa.
+  - xmlns:android: Define el espacio de nombres para los atributos base de Android.
+  - xmlns:app: Define el espacio de nombres para atributos de bibliotecas como ConstraintLayout o Material.
+  - xmlns:tools: Define atributos que solo se usan para la previsualización en el diseño.
+  - android:layout_width="match_parent": El contenedor ocupa todo el ancho disponible.
+  - android:layout_height="match_parent": El contenedor ocupa todo el alto disponible.
+  - android:padding="20dp": Añade un espacio interno de 20dp en todos los bordes.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <!-- 
+      ConstraintLayout secundario: Agrupa el título y el switch en la parte superior.
+      - android:id="@+id/headerLayout": Identificador para referenciarlo o anclar otros elementos.
+      - android:layout_width="0dp": El ancho se determinará por sus restricciones (start y end).
+      - android:layout_height="wrap_content": La altura se ajusta a lo que midan sus hijos.
+      - app:layout_constraintTop_toTopOf="parent": Se ancla a la parte superior de la pantalla.
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 
+          TextView: Muestra el nombre de la sección actual.
+          - android:id="@+id/tvTitle": ID para este campo de texto.
+          - android:textSize="24sp": Tamaño de letra grande para encabezado.
+          - android:textStyle="bold": Texto en negrita.
+          - android:textColor="?attr/colorOnBackground": Usa el color de texto definido por el tema actual.
+          - app:layout_constraintHorizontal_bias="0": Lo empuja totalmente hacia la izquierda.
+        -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Aula+ (Home)"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnBackground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/switchDarkMode"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <!-- 
+          MaterialSwitch: Interruptor para cambiar entre modo claro y oscuro.
+          - android:id="@+id/switchDarkMode": ID para detectar cambios en el código.
+          - android:text="🌙": Icono o texto que acompaña al interruptor.
+          - app:layout_constraintEnd_toEndOf="parent": Se alinea a la derecha del contenedor.
+        -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchDarkMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌙"
+            android:checked="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 
+      TextInputLayout: Contenedor de Material Design para el campo de entrada del título.
+      - android:hint="Título del aviso": Texto de ayuda que sube cuando se escribe.
+      - app:layout_constraintTop_toBottomOf="@id/headerLayout": Se coloca debajo del encabezado.
+    -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Título del aviso"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 
+          TextInputEditText: El campo donde el usuario escribe el título.
+          - android:inputType="textCapSentences": Pone en mayúscula la primera letra de cada frase.
+        -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 
+      TextInputLayout: Contenedor para la materia asociada al aviso.
+      - android:layout_marginTop="10dp": Separación con el campo anterior.
+    -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSubject"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Materia (DI, SI, DWES...)"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/tilTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 
+          TextInputEditText: El campo donde el usuario escribe la materia.
+          - android:inputType="textCapWords": Pone en mayúscula la primera letra de cada palabra.
+        -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSubject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 
+      MaterialButton: Botón principal para confirmar la creación del aviso.
+      - android:layout_width="320dp": Ancho fijo definido para el botón.
+      - android:text="Añadir aviso": Etiqueta visible del botón.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAdd"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:text="Añadir aviso"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/tilSubject"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 
+      MaterialButton: Botón con estilo de borde (outlined) para borrar.
+      - style="?attr/materialButtonOutlinedStyle": Cambia el aspecto a solo borde sin relleno.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDeleteLast"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:text="Borrar último"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/btnAdd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 
+      MaterialButton: Botón plano para cerrar sesión.
+      - app:layout_constraintBottom_toBottomOf="parent": Se ancla a la parte inferior de la pantalla.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogout"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cerrar sesión"
+        android:layout_marginTop="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 
+      TextView: Área donde se visualizan los avisos registrados.
+      - android:padding="12dp": Espacio para que el texto no toque los bordes del área.
+      - app:layout_constraintVertical_bias="0.901": Posiciona el elemento más cerca del fondo.
+    -->
+    <TextView
+        android:id="@+id/tvList"
+        android:layout_width="372dp"
+        android:layout_height="225dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="50dp"
+        android:padding="12dp"
+        android:text="Crea un aviso para que se muestre aquí"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnDeleteLast"
+        app:layout_constraintVertical_bias="0.901" />
+
+    <!-- 
+      MaterialButton: Botón para navegar al perfil del usuario.
+      - app:layout_constraintTop_toBottomOf="@id/btnDeleteLast": Se sitúa debajo del botón de borrar.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnProfile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Ver Perfil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnDeleteLast" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
