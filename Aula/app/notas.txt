@@ -33,6 +33,43 @@ Cuando abres Android Studio, ves varias zonas:
     - /navigation: El mapa de flechas que conecta las pantallas.
 
 --------------------------------------------------------------------------------
+2.5 EXPLORACIÓN DE ARCHIVOS (EL "QUIÉN ES QUIÉN" DE LA APP)
+--------------------------------------------------------------------------------
+
+Aquí tienes la lista de los archivos más importantes y para qué sirven:
+
+--- CARPETA UI (PANTALLAS) ---
+• MainActivity: El "marco" principal. No suele tener contenido propio, sino 
+  que aloja el menú inferior y el NavHost (donde cambian los fragmentos).
+• AuthGateFragment: El "portero". Comprueba si estás logueado. Si sí, te manda 
+  al Home; si no, te manda al Login.
+• LoginFragment / RegisterFragment: Pantallas de acceso. Piden email/password 
+  y se los pasan al AuthViewModel.
+• HomeFragment: El corazón de la app. Muestra la lista de avisos y permite 
+  crear nuevos.
+• ProfileFragment: Tu zona personal. Muestra tu info y permite cerrar sesión.
+
+--- CARPETA DATA & MODELS (LOS DATOS) ---
+• AuthRepository: El "telefonista" que habla con Firebase Auth. Se encarga de 
+  crear usuarios y loguearlos de verdad.
+• NoticeRepository: Gestiona la lista de avisos (Notices). Es quien sabe si 
+  estamos leyendo de internet o de una lista temporal.
+• Modelos (Aviso / Usuario): Son clases simples. Solo sirven para decir que 
+  un "Aviso" tiene un título (String), un texto (String) y una fecha.
+
+--- CARPETA LAYOUT (EL DIBUJO XML) ---
+• activity_main.xml: Define la estructura base (barra de navegación + hueco 
+  para pantallas).
+• fragment_auth_gate.xml: Suele ser una pantalla blanca o con un logo 
+  mientras la app decide qué mostrar.
+• fragment_home.xml: Contiene el RecyclerView (la lista) y el botón de añadir.
+• item_notice.xml: El molde que dice cómo se ve un solo aviso en la lista.
+
+--- CARPETA NAVIGATION (EL MAPA) ---
+• nav_graph.xml: Es el plano de la ciudad. Verás cuadraditos (pantallas) y 
+  flechas (acciones). Si quieres borrar un camino o crear uno nuevo, se hace aquí.
+
+--------------------------------------------------------------------------------
 3. LA RECETA MÁGICA: MVVM (EL SECRETO DE LOS PROFESIONALES)
 --------------------------------------------------------------------------------
 
@@ -65,7 +102,109 @@ Abre `HomeFragment.java`.
 - Pásaselo al ViewModel: `noticeVm.addNotice(title, subject, priority);`
 
 --------------------------------------------------------------------------------
-5. CONCEPTOS TÉCNICOS QUE DEBES CONOCER
+5. CÓMO CREAR UNA PANTALLA NUEVA DESDE CERO (EJEMPLO COMPLETO)
+--------------------------------------------------------------------------------
+
+Sigue estos pasos para crear una pantalla de Ajustes:
+
+1. Crear el Diseño (El dibujo)
+Crea un nuevo archivo XML en la carpeta `res/layout` llamado `fragment_settings.xml`.
+
+[Layout XML]
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pantalla de Ajustes"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+2. Crear la Clase Java (La lógica)
+Crea un archivo en la carpeta `ui/` llamado `SettingsFragment.java`.
+
+[Java]
+package com.example.aula.ui;
+
+import android.os.Bundle;
+import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import com.example.aula.R;
+
+public class SettingsFragment extends Fragment {
+    public SettingsFragment() {
+        super(R.layout.fragment_settings); // Enlazamos con el XML del paso 1
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Aquí buscarías tus botones con findViewById y pondrías la lógica
+    }
+}
+
+3. Registrarlo en el Mapa (Navigation Graph)
+Abre `res/navigation/nav_graph.xml`.
+• Modo Código: Añade el nodo manualmente:
+<fragment
+    android:id="@+id/settingsFragment"
+    android:name="com.example.aula.ui.SettingsFragment"
+    android:label="Ajustes" />
+
+4. Crear el Camino (La Acción)
+Para ir desde el Home a Ajustes, añade una acción dentro del bloque del `homeFragment`:
+<fragment android:id="@+id/homeFragment" ...>
+    <action
+        android:id="@+id/action_home_to_settings"
+        app:destination="@id/settingsFragment" />
+</fragment>
+
+5. Ejecutar el viaje (El Código)
+En tu `HomeFragment.java`, dentro del clic de un botón, ejecutas la navegación:
+btnSettings.setOnClickListener(v -> {
+    NavHostFragment.findNavController(this)
+            .navigate(R.id.action_home_to_settings);
+});
+
+--------------------------------------------------------------------------------
+6. CÓMO PASAR DATOS ENTRE PANTALLAS (EJ: DETALLES DE UN AVISO)
+--------------------------------------------------------------------------------
+
+Para que una pantalla reciba datos de otra (como ver los detalles de una nota), 
+usamos "Argumentos" y un objeto llamado "Bundle" (la maleta).
+
+1. REGISTRAR EL ARGUMENTO EN EL NAV_GRAPH:
+Selecciona el fragmento de destino (ej: DetailsFragment) y añade un argumento:
+<fragment android:id="@+id/detailsFragment" ...>
+    <argument
+        android:name="contenidoAviso"
+        app:argType="string" />
+</fragment>
+
+2. ENVIAR EL DATO DESDE EL ORIGEN:
+Preparamos la "maleta" (Bundle) y saltamos:
+Bundle bundle = new Bundle();
+bundle.putString("contenidoAviso", "Este es el texto del examen");
+NavHostFragment.findNavController(this).navigate(R.id.action_home_to_details, bundle);
+
+3. RECUPERAR EL DATO EN EL DESTINO:
+En el `onViewCreated` de la pantalla de detalles:
+if (getArguments() != null) {
+    String datos = getArguments().getString("contenidoAviso");
+    tvDetalle.setText(datos); // Mostramos el texto recibido
+}
+
+--------------------------------------------------------------------------------
+7. CONCEPTOS TÉCNICOS QUE DEBES CONOCER
 --------------------------------------------------------------------------------
 
 - IDs (`@+id/...`): Es el nombre único de cada cosa. Si dos cosas se llaman 
@@ -74,11 +213,9 @@ Abre `HomeFragment.java`.
   Fragment lo "recibe" automáticamente porque está "observando".
 - Context: Es una pieza de información que Android pide para saber dónde está. 
   En los Fragments se usa `requireContext()`.
-- Intent: No lo usamos mucho aquí porque usamos "Navigation", pero sirve para 
-  abrir otras apps o actividades.
 
 --------------------------------------------------------------------------------
-6. FIREBASE: TU BASE DE DATOS EN LA NUBE
+8. FIREBASE: TU BASE DE DATOS EN LA NUBE
 --------------------------------------------------------------------------------
 
 Esta app usa Firebase para que los usuarios existan de verdad.
@@ -87,27 +224,113 @@ Esta app usa Firebase para que los usuarios existan de verdad.
   usa `auth.getCurrentUser()`. Si no es nulo, es que ya entró.
 
 --------------------------------------------------------------------------------
-7. CÓMO ARREGLAR ERRORES (DEBUGGING)
+9. CÓMO ARREGLAR ERRORES (DEBUGGING)
 --------------------------------------------------------------------------------
 
 1. La app se cierra: Ve a la pestaña **Logcat**. Escribe `FATAL` en la barra 
    de búsqueda. Verás una línea azul que indica el archivo y la línea exacta 
-   donde falló.
-2. El botón no hace nada: Pon un "Breakpoint" (haz clic en el margen izquierdo 
-   del código para que salga un punto rojo) y dale al icono del "bichito" (Debug). 
-   La app se parará ahí y podrás ver qué tienen las variables dentro.
-3. El diseño se ve raro: Usa la pestaña "Split" en el XML para ver cómo cambia 
-   el dibujo mientras escribes el código.
+   don de falló.
+2. El botón no hace nada: Pon un "Breakpoint" (punto rojo) y usa el "bichito" (Debug).
 
 --------------------------------------------------------------------------------
-8. GLOSARIO RÁPIDO PARA EMPEZAR YA
+10. GLOSARIO RÁPIDO PARA EMPEZAR YA
 --------------------------------------------------------------------------------
 
 - `match_parent`: "Estírate todo lo que puedas hasta llenar el hueco".
-- `wrap_content`: "Hazte tan grande como lo que tengas dentro, ni un pelo más".
-- `dp`: Píxeles inteligentes (se ven igual en un móvil pequeño que en uno gigante).
-- `sp`: Tamaño para letras (permite que la gente que ve mal pueda agrandarlas).
+- `wrap_content`: "Hazte tan grande como lo que tengas dentro".
+- `dp`: Píxeles inteligentes para diseño.
+- `sp`: Tamaño para letras.
 - `findViewById`: "Búscame en el dibujo la pieza que se llame así".
+
+--------------------------------------------------------------------------------
+11. DICCIONARIO DE MÉTODOS ÚTILES (ANDROID STUDIO, JAVA Y PROPIOS)
+--------------------------------------------------------------------------------
+
+A continuación, una lista de las funciones más usadas en esta app:
+
+--- MÉTODOS ESTÁNDAR DE ANDROID (JAVA/IDE) ---
+
+1. `onViewCreated(View view, Bundle savedInstanceState)`:
+   - ¿Qué hace?: Se ejecuta cuando la pantalla (Fragment) se acaba de dibujar.
+   - Uso: Es el mejor sitio para buscar botones con `findViewById` y ponerles clics.
+   - Parámetros: `view` (la pantalla entera) y `savedInstanceState` (datos guardados).
+
+2. `findViewById(R.id.nombre_id)`:
+   - ¿Qué hace?: Busca una pieza del dibujo (XML) usando su nombre (ID).
+   - Uso: `Button b = view.findViewById(R.id.mi_boton);`
+   - Nota: Siempre hay que llamarlo DESPUÉS de que la vista exista.
+
+3. `setOnClickListener(v -> { ... })`:
+   - ¿Qué hace?: Le dice al móvil: "Cuando el usuario toque esto, haz lo siguiente".
+   - Uso: Se pone en botones, imágenes o cualquier cosa que quieras que sea pulsable.
+
+4. `observe(getViewLifecycleOwner(), data -> { ... })`:
+   - ¿Qué hace?: "Vigila" un dato en el ViewModel. Si el dato cambia, ejecuta el código.
+   - Uso: Para que la lista de avisos se actualice sola sin refrescar.
+
+5. `findNavController(this).navigate(R.id.accion)`:
+   - ¿Qué hace?: Ejecuta el salto de una pantalla a otra siguiendo una flecha del nav_graph.
+
+--- MÉTODOS DE DATOS Y VIEWMODELS (LIVEDATA) ---
+
+6. `setValue(valor)` vs `postValue(valor)`:
+   - ¿Qué hacen?: Actualizan el valor de un LiveData para avisar a la pantalla.
+   - Diferencia: `setValue` se usa si el código es "rápido" (hilo principal). `postValue` se usa si el código viene de internet o algo lento (hilos secundarios).
+
+7. `getString(R.string.nombre)`:
+   - ¿Qué hace?: Saca un texto del archivo `strings.xml`.
+   - Uso: Para mostrar mensajes al usuario sin escribirlos "a fuego" en el código.
+
+--- MÉTODOS PROPIOS DE AULA+ (LÓGICA PERSONALIZADA) ---
+
+8. `parseAuthError(Exception e)` (en AuthRepository):
+   - ¿Qué hace?: Coge un error raro de Google (ej: "Weak password") y lo traduce a algo bonito para el usuario ("La contraseña debe tener 6 caracteres").
+
+9. `consumeNavEvent()` (en ViewModels):
+   - ¿Qué hace?: Borra la orden de navegación una vez que se ha cumplido.
+   - Por qué: Si no se usa, al volver atrás con el móvil, la app podría intentar "navegar hacia adelante" otra vez sola.
+
+10. `addNotice(String title, String subject)` (en NoticeViewModel):
+    - ¿Qué hace?: Recibe los textos de la pantalla, crea un objeto "Aviso" y lo mete en la lista del repositorio.
+
+11. `getCurrentUser()` (en AuthRepository):
+    - ¿Qué hace?: Pregunta a Firebase: "¿Quién está conectado ahora?". Devuelve el objeto del usuario o `null` si no hay nadie.
+
+--------------------------------------------------------------------------------
+12. MANEJO DE LISTAS (RECYCLERVIEW) Y PERSISTENCIA DE DATOS
+--------------------------------------------------------------------------------
+
+Para mostrar una lista de elementos que cambian (como los avisos), usamos un 
+sistema de tres piezas:
+
+1. RECYCLERVIEW (La Ventana):
+   Es el hueco en el XML donde aparecerá la lista. No tiene diseño propio, 
+   solo "contiene" cosas.
+
+2. EL MOLDE (item_layout.xml):
+   Un archivo XML pequeño que dice cómo se ve UNA SOLA fila de la lista.
+
+3. EL ADAPTADOR (El Chef):
+   Es una clase Java que recibe la lista de datos (Avisos) y "cocina" cada 
+   fila usando el molde.
+   - Método `onCreateViewHolder`: "Crea el plato".
+   - Método `onBindViewHolder`: "Pon la comida (el texto) en el plato".
+
+--- TIPOS DE DATOS (¿Qué le doy a la app?) ---
+Para que las funciones funcionen, debes saber qué información piden:
+- String: Texto libre (ej: "Examen de Mates").
+- Int: Números enteros (ej: un ID o una posición).
+- Boolean: Solo dos valores: `true` (encendido) o `false` (apagado). Útil para 
+  el Modo Oscuro o un Switch.
+- List<Clase>: Una colección de muchos objetos del mismo tipo.
+
+--- PERSISTENCIA (¿Cómo no perder nada?) ---
+- ViewModel: Guarda los datos mientras la app está abierta. Si la cierras del 
+  todo, se borran. Se usa para la lista de avisos actual.
+- SharedPreferences: Guarda datos pequeños de forma permanente (como el Modo 
+  Oscuro). Usa una "clave" (ej: "dark_mode") para guardar un "valor" (true/false).
+- Firebase Firestore: Guarda datos en internet para siempre. Los avisos 
+  deberían ir aquí si quieres que otros alumnos los vean.
 
 ================================================================================
 RECUERDA: Nadie nace sabiendo. Si algo no sale, borra, lee este archivo y 
